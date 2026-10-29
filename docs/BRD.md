@@ -562,4 +562,92 @@ BR-01 unique Property ID · BR-02 unique Lead ID · BR-03 customer may link to m
 
 ---
 
-_Section 13 heading and any sections after 14 not yet received._
+## 15. Proposed End-to-End Workflows
+
+- **15.1 Property listing:** Create → Enter details → Upload images → Review → Publish → Receive inquiries → Update availability → Sell / Rent / Withdraw → Archive. Keep the record and history after the listing becomes inactive.
+- **15.2 Sales:** Lead received → Assigned → Contacted → Viewing → Negotiation → Offer accepted → Contract created → Payment schedule created → Payments recorded → Transaction completed. Allow authorized exceptions (cancelled or unsuccessful).
+- **15.3 Rental:** Inquiry → Qualification → Viewing → Terms agreed → Rental contract created → Activated → Rent schedule created → Payment tracking → Renewal reminder → Renew / Terminate.
+- **15.4 Payment:** Obligation created → Schedule defined → Reminder → Payment received → Recorded → Receipt → Balance updated → Paid when settled. Partial payments stay open until settled or resolved by an authorized adjustment.
+- **15.5 Contract renewal:** Active → Expiry approaching → Reminder → Customer contacted → Decision → Renewed / Terminated / Expired. Preserve the previous agreement and record the outcome.
+
+## 16. Data Management
+
+- **16.1 Core entities:** property, property image, property document, customer, lead, lead activity, transaction, contract, contract document, payment schedule, installment, payment, payment allocation, reminder, user, role and permission, audit log. **Design requirement:** payments and payment allocations are modeled separately from schedules, so one payment can be allocated across several obligations and several payments can settle one obligation.
+- **16.2 Relationships:** a property can have many listings/transactions and many contracts over time; a customer can have many properties and leads; a transaction can have one or more contracts; a contract can have many payment obligations and renewal records; a schedule has many installments; an installment can receive many partial payments; a payment can be allocated to one or more obligations. Preserve history and referential integrity.
+
+## 17. Proposed System Architecture
+
+Public website, admin portal, application backend (business rules, workflow, validation), database, file storage, reminder service, notification integrations (email/SMS/WhatsApp per scope), reporting module. Website and admin portal share the same property records. The reminder service runs independently of users being logged in.
+
+## 18. Implementation Phases
+
+1. **Core website and property CMS:** public website, categories, listings, search and filters, details pages, inquiry forms, property create/edit, uploads, publish/unpublish/archive/remove, basic users and roles.
+2. **CRM and transactions:** leads, customers, assignment, follow-ups, interaction history, sales/purchase/rental transactions, viewing requests, pipeline.
+3. **Contracts and payments:** contract repository, status, dates, renewals, schedules, full and partial payments, installments, balances, receipts, payment and contract reports.
+4. **Reminders and reporting:** payment, overdue, expiry, renewal and follow-up reminders; in-system notification centre; email if in scope; dashboards; reports and exports.
+5. **Optional:** customer portal, payment gateway, WhatsApp Business API, SMS gateway, e-signatures, automatic lead assignment, advanced analytics, multi-branch, multiple languages, accounting integration, map search, comparison and saved favourites.
+
+## 19. Acceptance Criteria
+
+| ID | Requirement |
+|---|---|
+| AC01 | An authorized user can create and publish a property listing. |
+| AC02 | A published property appears on the public website with the correct details. |
+| AC03 | A visitor can search and filter properties using the available criteria. |
+| AC04 | A visitor can submit a property inquiry that creates a CRM lead. |
+| AC05 | An authorized user can assign a lead to an agent and schedule follow-ups. |
+| AC06 | An authorized user can update a property's status and remove it from active listings. |
+| AC07 | Archived properties remain accessible to authorized users. |
+| AC08 | An authorized user can create a sales, purchase, or rental transaction record. |
+| AC09 | An authorized user can create a contract and record its start and end dates. |
+| AC10 | The system generates configured contract expiry and renewal reminders. |
+| AC11 | An authorized user can create a payment schedule for a contract or transaction. |
+| AC12 | The system supports full and partial payments against a payable obligation. |
+| AC13 | The system supports installment schedules with individual due dates. |
+| AC14 | The system correctly calculates amounts paid and outstanding balances. |
+| AC15 | The system generates configured reminders for upcoming and overdue payments. |
+| AC16 | The system generates a receipt for each recorded payment. |
+| AC17 | Authorized users can view payment histories and relevant financial reports. |
+| AC18 | Role-based permissions restrict access to unauthorized functions and records. |
+| AC19 | Important property, contract, and financial changes are captured in audit logs. |
+| AC20 | The website and administrative interface operate correctly on supported desktop and mobile devices. |
+
+## 20. Assumptions and Dependencies
+
+The client provides: business name, logo, branding and content; property information, images, prices and descriptions; categories and workflows; contract templates and commercial terms; who may create, approve and modify contracts; payment methods, installment rules and reminder schedules; email/SMS/WhatsApp credentials if required; data retention and access rules. Payments are recorded manually unless online payment is included. Contracts are uploaded unless document generation is included. The system tracks business records and payments but is not a complete accounting or tax system. External integrations depend on the chosen providers.
+
+## 21. Items Requiring Client Confirmation
+
+| # | Question | Recommended approach |
+|---|---|---|
+| 1 | Own properties, broker third-party properties, or both? | Support both ownership and brokerage records. |
+| 2 | One city or multiple? | Make locations configurable. |
+| 3 | PKR only or multiple currencies? | PKR default, currency configurable. |
+| 4 | Customer login portal? | Exclude from initial scope unless required. |
+| 5 | Payments recorded manually or collected online? | Manual payment management; quote gateway separately. |
+| 6 | Which notification channels? | In-system reminders; confirm email, SMS, WhatsApp. |
+| 7 | Contracts generated in the system or uploaded? | Upload and tracking; generation optional. |
+| 8 | Renewals automatic or customer-approved? | Explicit renewal decision; preserve history. |
+| 9 | Payments collected by the client or by owners? | Define payment responsibility per transaction type. |
+| 10 | Commission tracking? | Confirm whether agent, brokerage or referral commissions are in scope. |
+| 11 | Formal accounting? | Separate module unless requested. |
+| 12 | Approval workflows? | Define approvals for publication, contract execution, payment adjustments, cancellations. |
+| 13 | Multi-branch operations? | Design for expansion; confirm branch-level access. |
+| 14 | Historical data migration? | Assess sources; scope separately. |
+| 15 | Online customer receipts or statements? | Internal receipts initially; customer access later. |
+
+## 22. Recommended Additional Requirements
+
+- **22.1 Commission management** (if acting as intermediary): sales, rental, agent and referral commission, status and payment dates, with configurable rules.
+- **22.2 Ownership and availability controls:** separate fields for legal owner, listing authorization, availability, transaction status and publication status.
+- **22.3 Payment reconciliation** against bank statements or gateway transactions, for high volumes or formal controls.
+- **22.4 Escalations:** overdue payments and expiring contracts escalated to designated managers after a configured period.
+- **22.5 Customer communication history:** consolidated calls, emails, viewings, negotiations and payment communications.
+
+## 23. Out of Scope Unless Separately Approved
+
+Online payment gateway; full accounting and general ledger; tax calculation and filing; automated legal validation of contracts; e-signatures; property valuation and automated pricing; external property portal integration; map-based search; customer mobile or native apps; customer self-service portal; automated bank reconciliation; commission accounting; maintenance and work orders; tenant utility billing; inventory or construction management; mortgage or financing; third-party identity verification; government land records integration; automated ownership verification.
+
+## 24. Final Recommendation
+
+One integrated platform with four layers: public website; property CMS; CRM and contract management; payment and reminder management. Every property, customer, transaction, contract and payment obligation is linked through a common data model, so a manager can open a property and see its listing status, leads, buyer or tenant, contracts, payment schedules, payments received, outstanding balances and renewal history in one place.

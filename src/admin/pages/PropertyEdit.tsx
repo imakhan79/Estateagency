@@ -1,8 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { AlertTriangle, ArrowDown, ArrowUp, ExternalLink, FileText, Trash2, Upload } from "lucide-react";
 import { useAuth } from "../auth";
-import { dateTime, fileExt, label, nameOf, q, signedUrl, slugify, supabase, useLoad, useLookups, type Row } from "../lib";
+import { date, dateTime, fileExt, label, money, nameOf, q, signedUrl, slugify, supabase, useLoad, useLookups, type Row } from "../lib";
+import { RecordPicker } from "../pickers";
 import { mediaUrl, type Media } from "../../lib/api";
 import { Badge, Button, Card, ErrorBox, Field, Input, Modal, PageHeader, Select, Spinner, Table, Textarea, formValues, useAction } from "../ui";
 
@@ -21,8 +22,10 @@ export default function PropertyEdit() {
 
   const { data: p, error, reload } = useLoad(async () => {
     if (isNew) return EMPTY;
-    return q<Row>(supabase.from("properties").select("*, property_features(feature_id)").eq("id", id!).single());
+    return q<Row>(supabase.from("properties").select("*, property_features(feature_id), owner:customers!properties_owner_id_fkey(id, ref, full_name)").eq("id", id!).single());
   }, [id]);
+  const [owner, setOwner] = useState<Row | null>(null);
+  useEffect(() => setOwner(p?.owner ?? null), [p]);
 
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [typeId, setTypeId] = useState<number | null>(null);
@@ -49,7 +52,8 @@ export default function PropertyEdit() {
       address: v.address, public_address: v.public_address, size: v.size ? Number(v.size) : null, size_unit: v.size_unit,
       bedrooms: hasRooms && v.bedrooms ? Number(v.bedrooms) : null, bathrooms: hasRooms && v.bathrooms ? Number(v.bathrooms) : null,
       floors: v.floors ? Number(v.floors) : null, furnishing: v.furnishing, featured: v.featured === "on",
-      ownership: v.ownership, acquired_on: v.acquired_on, agent_id: v.agent_id, branch_id: v.branch_id ? Number(v.branch_id) : null,
+      ownership: v.ownership, acquired_on: v.acquired_on, agent_id: v.agent_id, owner_id: owner?.id ?? null,
+      listing_authorization: v.listing_authorization, authorization_expires_on: v.authorization_expires_on, authorization_notes: v.authorization_notes, branch_id: v.branch_id ? Number(v.branch_id) : null,
       internal_notes: v.internal_notes, seo_title: v.seo_title, seo_description: v.seo_description,
       video_urls: (v.video_urls ?? "").split(/\s+/).filter((u) => /^https?:\/\//.test(u)),
     };
@@ -174,6 +178,18 @@ export default function PropertyEdit() {
                   </Select>
                 </Field>
                 <Field label="Acquired on" hint="For business-owned stock."><Input name="acquired_on" type="date" defaultValue={p.acquired_on ?? ""} /></Field>
+                <Field label="Legal owner" hint="The customer record of the owner or landlord.">
+                  <RecordPicker key={p.id ?? "new"} table="customers" initial={owner} onPick={setOwner} />
+                </Field>
+                <Field label="Listing authorization">
+                  <Select name="listing_authorization" defaultValue={p.listing_authorization ?? "none"}>
+                    <option value="none">Not yet authorized</option><option value="verbal">Verbal permission</option>
+                    <option value="non_exclusive">Written, non-exclusive</option><option value="exclusive">Written, exclusive</option>
+                    <option value="client_owned">Business-owned (no authorization needed)</option>
+                  </Select>
+                </Field>
+                <Field label="Authorization expires"><Input name="authorization_expires_on" type="date" defaultValue={p.authorization_expires_on ?? ""} /></Field>
+                <Field label="Authorization notes"><Input name="authorization_notes" defaultValue={p.authorization_notes ?? ""} placeholder="e.g. signed mandate on file, 2% commission" /></Field>
                 <Field label="Internal notes" className="sm:col-span-2"><Textarea name="internal_notes" defaultValue={p.internal_notes ?? ""} /></Field>
                 <label className="flex items-center gap-2 text-sm sm:col-span-2">
                   <input type="checkbox" name="featured" defaultChecked={p.featured} className="accent-brand-700" /> Show in featured properties on the home page
@@ -195,6 +211,7 @@ export default function PropertyEdit() {
 
         {!isNew && (
           <div className="space-y-6">
+            <PropertyOverview propertyId={p.id} />
             <MediaManager propertyId={p.id} editable={editable} />
             <Documents propertyId={p.id} editable={editable} />
             <OpenDeals propertyId={p.id} />
@@ -363,6 +380,67 @@ function Documents({ propertyId, editable }: { propertyId: string; editable: boo
         ))}
       </ul>
     </Card>
+  );
+}
+
+// Everything linked to this property in one place (BRD §24): leads, buyers/tenants, contracts with
+// renewals, payment schedules, money received and outstanding. Each part only appears if the role can see it.
+function PropertyOverview({ propertyId }: { propertyId: string }) {
+  const { can } = useAuth();
+  const l = useLookups();
+  const { data } = useLoad(async () => {
+    const [leads, txs, contracts, schedules] = await Promise.all([
+      can("leads.view_all") || can("leads.view_assigned")
+        ? q<Row[]>(supabase.from("leads").select("id, ref, name, inquiry_type, status_id, created_at").eq("property_id", propertyId).order("created_at", { ascending: false }).limit(20)) : [],
+      can("transactions.view") || can("transactions.view_own")
+        ? q<Row[]>(supabase.from("transactions").select("id, ref, kind, status_id, agreed_price, currency, transaction_parties(role, customers(id, full_name))").eq("property_id", propertyId).order("created_at", { ascending: false })) : [],
+      can("contracts.view") || can("contracts.view_own")
+        ? q<Row[]>(supabase.from("contracts").select("id, ref, status, type_id, start_date, end_date, previous_contract_id, contract_parties(role, customers(id, full_name))").eq("property_id", propertyId).order("start_date", { ascending: false })) : [],
+      can("payments.view") ? q<Row[]>(supabase.from("schedule_balances").select("id, ref, title, total, paid, outstanding, overdue, currency, status").eq("property_id", propertyId)) : [],
+    ]);
+    return { leads, txs, contracts, schedules };
+  }, [propertyId]);
+  if (!data || !l) return null;
+
+  const parties = (list: Row[], roles: string[]) =>
+    list.flatMap((x) => (x.transaction_parties ?? x.contract_parties ?? []).filter((p: Row) => roles.includes(p.role)).map((p: Row) => p.customers))
+      .filter((c, i, arr) => c && arr.findIndex((o) => o?.id === c.id) === i);
+  const buyers = parties(data.txs, ["buyer", "co_buyer"]);
+  const tenants = parties(data.contracts.filter((c) => ["active", "expiring_soon"].includes(c.status)), ["tenant"]);
+  const totals = data.schedules.reduce((a, s) => ({ paid: a.paid + Number(s.paid), outstanding: a.outstanding + Number(s.outstanding), overdue: a.overdue + Number(s.overdue) }), { paid: 0, outstanding: 0, overdue: 0 });
+  const empty = !data.leads.length && !data.txs.length && !data.contracts.length && !data.schedules.length;
+
+  return (
+    <Card title="Property overview">
+      {empty && <p className="text-sm text-stone-500">No leads, deals, contracts or payments yet.</p>}
+      {(buyers.length > 0 || tenants.length > 0) && (
+        <p className="mb-3 text-sm">
+          {buyers.length > 0 && <>Buyer: {buyers.map((c) => <Link key={c.id} className="text-brand-700 hover:underline" to={`/admin/customers/${c.id}`}>{c.full_name}</Link>)} </>}
+          {tenants.length > 0 && <>Current tenant: {tenants.map((c) => <Link key={c.id} className="text-brand-700 hover:underline" to={`/admin/customers/${c.id}`}>{c.full_name}</Link>)}</>}
+        </p>
+      )}
+      {data.schedules.length > 0 && (
+        <div className="mb-4 grid grid-cols-3 gap-2 text-center text-xs">
+          <div className="rounded-lg bg-emerald-50 p-2"><p className="text-stone-500">Received</p><p className="font-semibold text-emerald-700">{money(totals.paid)}</p></div>
+          <div className="rounded-lg bg-amber-50 p-2"><p className="text-stone-500">Outstanding</p><p className="font-semibold text-amber-800">{money(totals.outstanding)}</p></div>
+          <div className="rounded-lg bg-red-50 p-2"><p className="text-stone-500">Overdue</p><p className="font-semibold text-red-700">{money(totals.overdue)}</p></div>
+        </div>
+      )}
+      <OverviewList title="Leads" rows={data.leads} render={(r) => <><Link className="text-brand-700 hover:underline" to={`/admin/leads/${r.id}`}>{r.ref}</Link> {r.name} <span className="text-stone-500">· {r.inquiry_type} · {nameOf(l.leadStatuses, r.status_id)}</span></>} />
+      <OverviewList title="Sales and purchases" rows={data.txs} render={(r) => <><Link className="text-brand-700 hover:underline" to={`/admin/transactions/${r.id}`}>{r.ref}</Link> {r.kind} · {money(r.agreed_price, r.currency)} <span className="text-stone-500">· {nameOf(l.txStatuses, r.status_id)}</span></>} />
+      <OverviewList title="Contracts and renewals" rows={data.contracts} render={(r) => <><Link className="text-brand-700 hover:underline" to={`/admin/contracts/${r.id}`}>{r.ref}</Link> {nameOf(l.contractTypes, r.type_id)} <Badge status={r.status} /><span className="block text-xs text-stone-500">{date(r.start_date)} – {date(r.end_date)}{r.previous_contract_id ? " · renewal" : ""}</span></>} />
+      <OverviewList title="Payment schedules" rows={data.schedules} render={(r) => <><Link className="text-brand-700 hover:underline" to={`/admin/payments/${r.id}`}>{r.ref}</Link> {r.title} <Badge status={r.status} /><span className="block text-xs text-stone-500">Paid {money(r.paid, r.currency)} of {money(r.total, r.currency)}</span></>} />
+    </Card>
+  );
+}
+
+function OverviewList({ title, rows, render }: { title: string; rows: Row[]; render: (r: Row) => React.ReactNode }) {
+  if (!rows.length) return null;
+  return (
+    <div className="mt-3">
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-stone-500">{title}</p>
+      <ul className="space-y-1.5 text-sm">{rows.map((r) => <li key={r.id}>{render(r)}</li>)}</ul>
+    </div>
   );
 }
 
