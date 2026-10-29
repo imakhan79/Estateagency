@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "db:setup": "node --env-file=.env scripts/db-setup.mjs",
-    "db:demo-users": "node --env-file=.env scripts/demo-users.mjs"
+    "db:demo-users": "node --env-file=.env scripts/demo-users.mjs",
+    "db:sample-deals": "node --env-file=.env scripts/sample-deals.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.46.1",
