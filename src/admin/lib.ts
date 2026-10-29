@@ -21,7 +21,11 @@ export function dateTime(d: string | null | undefined) {
   return new Date(d).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 
-export const today = () => new Date().toISOString().slice(0, 10);
+// Local date (Pakistan time for staff), not UTC — toISOString() gives yesterday's date before 5am PKT.
+export const localDate = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export const today = () => localDate(new Date());
+export const daysFromToday = (n: number) => localDate(new Date(Date.now() + n * 86400000));
 
 export function label(slug: string | null | undefined) {
   if (!slug) return "—";

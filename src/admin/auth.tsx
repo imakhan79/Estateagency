@@ -18,15 +18,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Row | null>(null);
   const [permissions, setPermissions] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  // False until the saved session has been read. Without this, a page refresh briefly looks
+  // signed-out and bounces to the login page, losing the page the user was on.
+  const [sessionRead, setSessionRead] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setSessionRead(true);
+    });
     const { data } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
     return () => data.subscription.unsubscribe();
   }, []);
 
   const userId = session?.user.id;
   useEffect(() => {
+    if (!sessionRead) return;
     let cancelled = false;
     (async () => {
       if (!userId) {
@@ -48,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, sessionRead]);
 
   const value: AuthState = {
     loading,

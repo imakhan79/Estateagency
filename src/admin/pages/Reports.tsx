@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Download, FileSpreadsheet, Printer } from "lucide-react";
 import { useAuth } from "../auth";
-import { date, label, nameOf, q, supabase, today, useLoad, useLookups, type Lookups, type Row } from "../lib";
+import { date, daysFromToday, label, localDate, nameOf, q, supabase, today, useLoad, useLookups, type Lookups, type Row } from "../lib";
 import { exportCsv, exportPdf, exportXlsx, type ExportColumn } from "../export";
 import { Button, Card, ErrorBox, Field, Input, PageHeader, Select, Spinner } from "../ui";
 
@@ -321,7 +321,7 @@ const REPORTS: Report[] = [
       if (variant === "outstanding") query = query.gt("outstanding", 0);
       if (variant === "overdue") query = query.eq("status", "overdue");
       if (variant === "partially_paid") query = query.gt("paid", 0).gt("outstanding", 0);
-      if (variant === "upcoming") query = query.gt("outstanding", 0).gte("due_date", today()).lte("due_date", new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10));
+      if (variant === "upcoming") query = query.gt("outstanding", 0).gte("due_date", today()).lte("due_date", daysFromToday(30));
       const rows = await q<Row[]>(query.limit(10000));
       const ids = [...new Set(rows.map((r) => r.customer_id))];
       const customers = ids.length ? await q<Row[]>(supabase.from("customers").select("id, full_name, mobile").in("id", ids)) : [];
@@ -356,7 +356,7 @@ const REPORTS: Report[] = [
 function monthsAgo(n: number) {
   const d = new Date();
   d.setMonth(d.getMonth() - n);
-  return d.toISOString().slice(0, 10);
+  return localDate(d);
 }
 
 export default function Reports() {

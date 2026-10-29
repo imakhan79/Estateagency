@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth";
-import { date, dateTime, money, q, supabase, today, useLoad, type Row } from "../lib";
+import { date, dateTime, localDate, money, q, supabase, today, useLoad, type Row } from "../lib";
 import { Badge, Card, ErrorBox, Field, Input, PageHeader, Stat, Table } from "../ui";
 
 function monthStart() {
   const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10);
+  return localDate(new Date(d.getFullYear(), d.getMonth(), 1));
 }
 
 export default function Dashboard() {

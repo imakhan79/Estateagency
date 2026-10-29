@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { useAuth } from "../auth";
-import { date, label, money, q, supabase, today, useLoad, useLookups, type Row } from "../lib";
+import { date, daysFromToday, label, money, q, supabase, today, useLoad, useLookups, type Row } from "../lib";
 import { RecordPicker } from "../pickers";
 import { Badge, Button, Card, ErrorBox, Field, Input, Modal, PageHeader, Select, Table, Tabs, Textarea, formValues, useAction } from "../ui";
 
@@ -33,7 +33,7 @@ export default function ScheduleList() {
     if (tab !== "due") return null;
     let query = supabase.from("installment_balances").select("*").gt("outstanding", 0).order("due_date").limit(500);
     if (status) query = query.eq("status", status);
-    else query = query.lte("due_date", new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10));
+    else query = query.lte("due_date", daysFromToday(30));
     return q<Row[]>(query);
   }, [tab, status]);
 

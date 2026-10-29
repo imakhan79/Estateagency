@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FileText, Upload } from "lucide-react";
 import { useAuth } from "../auth";
-import { date, dateTime, fileExt, label, money, nameOf, q, signedUrl, supabase, useLoad, useLookups, type Row } from "../lib";
+import { date, dateTime, fileExt, label, money, nameOf, q, signedUrl, supabase, today, useLoad, useLookups, type Row } from "../lib";
 import { RecordPicker } from "../pickers";
 import { DealCommissions } from "./Commissions";
 import { Badge, Button, Card, DL, ErrorBox, Field, Input, Modal, PageHeader, Select, Spinner, Table, Textarea, formValues, useAction } from "../ui";
@@ -50,7 +50,7 @@ export default function ContractDetail() {
           {editable && nextStatuses.length > 0 && (
             <Select className="w-auto" value="" disabled={act.busy} onChange={(e) => {
               const s = e.target.value;
-              if (s === "terminated") setModal("terminate"); else if (s) update({ status: s, ...(s === "active" && !c.signed_on ? { signed_on: new Date().toISOString().slice(0, 10) } : {}) });
+              if (s === "terminated") setModal("terminate"); else if (s) update({ status: s, ...(s === "active" && !c.signed_on ? { signed_on: today() } : {}) });
             }}>
               <option value="">Change status…</option>
               {nextStatuses.map((s) => <option key={s} value={s}>{label(s)}</option>)}
@@ -190,7 +190,7 @@ export default function ContractDetail() {
           const v = formValues(e.currentTarget);
           if (await act.run(() => q(supabase.from("contracts").update({ status: "terminated", terminated_on: v.date, termination_reason: v.reason, renewal_status: c.renewal_status ? "not_renewing" : null }).eq("id", c.id)), reload)) setModal(null);
         }}>
-          <Field label="Termination date"><Input name="date" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /></Field>
+          <Field label="Termination date"><Input name="date" type="date" required defaultValue={today()} /></Field>
           <Field label="Reason"><Textarea name="reason" required /></Field>
           <ErrorBox error={act.error} />
           <Button type="submit" variant="danger" busy={act.busy}>Terminate</Button>
