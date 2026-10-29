@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./index.css";
@@ -12,10 +12,14 @@ import Contact from "./pages/Contact";
 import { Privacy, Terms } from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
+// The back office loads separately so website visitors never download it.
+const AdminApp = lazy(() => import("./admin/AdminApp"));
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
+        <Route path="admin/*" element={<Suspense fallback={null}><AdminApp /></Suspense>} />
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="buy" element={<Listings listingType="sale" />} />
