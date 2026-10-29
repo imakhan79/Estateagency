@@ -65,9 +65,8 @@ export default function AdminApp() {
 
 function Guard({ children }: { children: React.ReactNode }) {
   const { loading, session, staff, signOut } = useAuth();
-  const location = useLocation();
   if (loading) return <div className="min-h-screen bg-stone-50"><Spinner /></div>;
-  if (!session) return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
+  if (!session) return <Navigate to="/admin/login" replace />;
   if (!staff) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50 p-4">
@@ -100,15 +99,15 @@ const DEMO_USERS = [
 function Login() {
   const { session, staff, loading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [mode, setMode] = useState<"signin" | "signup" | "reset">("signin");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && session && staff) navigate((location.state as { from?: string })?.from ?? "/admin", { replace: true });
-  }, [loading, session, staff, navigate, location.state]);
+    // Always land on the dashboard after signing in.
+    if (!loading && session && staff) navigate("/admin", { replace: true });
+  }, [loading, session, staff, navigate]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
