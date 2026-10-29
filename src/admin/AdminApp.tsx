@@ -85,6 +85,18 @@ function Guard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Demo sign-in buttons (accounts made by `npm run db:demo-users`). Turn off with VITE_DEMO_LOGINS=false before real data goes in.
+const DEMO_LOGINS = import.meta.env.VITE_DEMO_LOGINS === "true";
+const DEMO_PASSWORD = "Demo@2026!";
+const DEMO_USERS = [
+  { label: "Super Admin", email: "superadmin@demo.local" },
+  { label: "Manager", email: "manager@demo.local" },
+  { label: "Property Manager", email: "property@demo.local" },
+  { label: "Sales / Rental Agent", email: "agent@demo.local" },
+  { label: "Finance Officer", email: "finance@demo.local" },
+  { label: "Legal Officer", email: "legal@demo.local" },
+];
+
 function Login() {
   const { session, staff, loading } = useAuth();
   const navigate = useNavigate();
@@ -130,7 +142,7 @@ function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-900 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <img src="/favicon.svg" alt="" className="h-10 w-10" />
         <h1 className="mt-4 text-xl font-semibold text-stone-900">
           {mode === "signin" ? "Staff sign in" : mode === "signup" ? "Create staff account" : "Reset password"}
@@ -149,6 +161,28 @@ function Login() {
             {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
           </Button>
         </form>
+        {DEMO_LOGINS && mode === "signin" && (
+          <div className="mt-6 border-t border-stone-200 pt-5">
+            <p className="text-sm font-medium text-stone-900">Demo accounts</p>
+            <p className="mb-3 text-xs text-stone-500">One click signs in as each role. Password for all: <code className="rounded bg-stone-100 px-1">{DEMO_PASSWORD}</code></p>
+            <div className="grid grid-cols-2 gap-2">
+              {DEMO_USERS.map((u) => (
+                <button key={u.email} type="button" disabled={busy}
+                  onClick={async () => {
+                    setBusy(true);
+                    setError(null);
+                    const { error } = await supabase.auth.signInWithPassword({ email: u.email, password: DEMO_PASSWORD });
+                    if (error) setError(error.message);
+                    setBusy(false);
+                  }}
+                  className="rounded-lg border border-stone-300 px-3 py-2 text-left text-sm hover:border-brand-600 hover:bg-brand-50 disabled:opacity-50">
+                  <span className="block font-medium text-stone-900">{u.label}</span>
+                  <span className="block truncate text-xs text-stone-500">{u.email}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="mt-6 flex justify-between text-sm">
           {mode !== "signin"
             ? <button className="text-brand-700 hover:underline" onClick={() => setMode("signin")}>Back to sign in</button>
