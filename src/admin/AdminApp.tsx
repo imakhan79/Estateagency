@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, Navigate, NavLink, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import {
-  BarChart3, Bell, Building2, FileSignature, Handshake, Home, LayoutDashboard, LogOut, Menu, Settings, UserCog, Users, Wallet, X,
+  BarChart3, Bell, Building2, FileSignature, Handshake, Home, LayoutDashboard, LogOut, Menu, Percent, Settings, UserCog, Users, Wallet, X,
 } from "lucide-react";
 import { AuthProvider, useAuth } from "./auth";
 import { dateTime, supabase, useLoad, type Row } from "./lib";
@@ -21,6 +21,7 @@ import ScheduleList from "./pages/ScheduleList";
 import ScheduleDetail from "./pages/ScheduleDetail";
 import Receipt from "./pages/Receipt";
 import Reports from "./pages/Reports";
+import Commissions from "./pages/Commissions";
 import SettingsPage from "./pages/Settings";
 import UsersPage from "./pages/Users";
 
@@ -53,6 +54,7 @@ export default function AdminApp() {
           <Route path="contracts/:id" element={<ContractDetail />} />
           <Route path="payments" element={<ScheduleList />} />
           <Route path="payments/:id" element={<ScheduleDetail />} />
+          <Route path="commissions" element={<Commissions />} />
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="users" element={<UsersPage />} />
@@ -203,6 +205,7 @@ const nav = [
   { to: "/admin/transactions", label: "Sales & purchases", icon: Handshake, any: ["transactions.view", "transactions.view_own"] },
   { to: "/admin/contracts", label: "Contracts", icon: FileSignature, any: ["contracts.view", "contracts.view_own"] },
   { to: "/admin/payments", label: "Payments", icon: Wallet, any: ["payments.view"] },
+  { to: "/admin/commissions", label: "Commissions", icon: Percent, any: ["commissions.view", "commissions.view_own"] },
   { to: "/admin/reports", label: "Reports", icon: BarChart3, any: ["reports.view"] },
   { to: "/admin/users", label: "Users", icon: Users, any: ["users.manage"] },
   { to: "/admin/settings", label: "Settings", icon: Settings },

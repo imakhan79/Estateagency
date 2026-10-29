@@ -4,6 +4,7 @@ import { FileText, Upload } from "lucide-react";
 import { useAuth } from "../auth";
 import { date, dateTime, fileExt, label, money, nameOf, q, signedUrl, supabase, useLoad, useLookups, type Row } from "../lib";
 import { RecordPicker } from "../pickers";
+import { DealCommissions } from "./Commissions";
 import { Badge, Button, Card, DL, ErrorBox, Field, Input, Modal, PageHeader, Select, Spinner, Table, Textarea, formValues, useAction } from "../ui";
 
 const ACCEPT = ".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png";
@@ -111,6 +112,8 @@ export default function ContractDetail() {
               ]} />
             </Card>
           )}
+
+          {isRental && !c.transaction_id && <DealCommissions contractId={c.id} propertyId={c.property_id} currency={c.currency} agentId={c.responsible_id} />}
         </div>
 
         <div className="space-y-6">

@@ -268,6 +268,40 @@ const REPORTS: Report[] = [
     ] : [{ key: "group", header: "Group" }, { key: "count", header: variant === "customer" || variant === "method" ? "Payments" : "Allocations" }, { key: "amount", header: "Amount", value: (r) => num(r.amount) }],
   },
   {
+    key: "commissions", group: "Payments", title: "Commissions", perms: ["commissions.view"], dated: "Created between",
+    variants: [
+      { key: "list", label: "All commissions" }, { key: "agent", label: "By agent" }, { key: "status", label: "By status" },
+      { key: "outstanding", label: "Unpaid (pending and approved)" },
+    ],
+    load: async ({ from, to, variant }) => {
+      let query = supabase.from("report_commissions").select("*").neq("status", "cancelled").gte("created_at", from).lte("created_at", end(to)).order("created_at");
+      if (variant === "outstanding") query = query.in("status", ["pending", "approved"]);
+      const rows = await q<Row[]>(query.limit(10000));
+      if (variant === "agent") {
+        return groupBy(rows.filter((r) => r.kind === "agent"), (r) => r.agent ?? "—", (g) => ({
+          amount: g.reduce((a, r) => a + num(r.amount), 0), paid: g.filter((r) => r.status === "paid").reduce((a, r) => a + num(r.amount), 0),
+        }));
+      }
+      if (variant === "status") {
+        return groupBy(rows, (r) => `${label(r.kind)} — ${label(r.status)}`, (g) => ({ amount: g.reduce((a, r) => a + num(r.amount), 0) }));
+      }
+      return rows;
+    },
+    columns: ({ variant }) => variant === "agent"
+      ? [{ key: "group", header: "Agent" }, { key: "count", header: "Commissions" }, { key: "amount", header: "Total", value: (r) => num(r.amount) }, { key: "paid", header: "Paid", value: (r) => num(r.paid) }]
+      : variant === "status"
+        ? [{ key: "group", header: "Kind — status" }, { key: "count", header: "Commissions" }, { key: "amount", header: "Amount", value: (r) => num(r.amount) }]
+        : [
+            { key: "ref", header: "Ref" }, { key: "created_at", header: "Created", value: (r) => date(r.created_at as string) },
+            { key: "kind", header: "Kind" }, { key: "description", header: "Description" },
+            { key: "party", header: "Payer / payee", value: (r) => (r.kind === "brokerage" ? r.payer : r.agent ?? r.referrer) as string },
+            { key: "deal", header: "Deal", value: (r) => (r.transaction_ref ?? r.contract_ref) as string },
+            { key: "property_ref", header: "Property" }, { key: "amount", header: "Amount", value: (r) => num(r.amount) },
+            { key: "status", header: "Status", value: (r) => label(r.status as string) },
+            { key: "due_date", header: "Due", value: (r) => date(r.due_date as string) }, { key: "paid_on", header: "Paid", value: (r) => date(r.paid_on as string) },
+          ],
+  },
+  {
     key: "collections", group: "Payments", title: "Collection summary", perms: ["payments.view"], dated: "Month between",
     load: async ({ from, to }) => q<Row[]>(supabase.from("report_collections").select("*").gte("month", from.slice(0, 8) + "01").lte("month", to).order("month")),
     columns: () => [

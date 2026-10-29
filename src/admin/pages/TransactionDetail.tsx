@@ -6,6 +6,7 @@ import { date, dateTime, money, nameOf, q, supabase, useLoad, useLookups, type R
 import { RecordPicker } from "../pickers";
 import { Badge, Button, Card, DL, ErrorBox, Field, Input, Modal, PageHeader, Select, Spinner, Table, Textarea, formValues, useAction } from "../ui";
 import { NewSchedule } from "./ScheduleList";
+import { DealCommissions } from "./Commissions";
 
 export default function TransactionDetail() {
   const { id } = useParams();
@@ -92,6 +93,8 @@ export default function TransactionDetail() {
               ]} />
             </Card>
           )}
+
+          <DealCommissions transactionId={t.id} propertyId={t.property_id} currency={t.currency} agentId={t.agent_id} />
         </div>
 
         <div className="space-y-6">

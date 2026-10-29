@@ -12,7 +12,7 @@ export default function SettingsPage() {
     { key: "account", label: "My account" },
     ...(admin ? [
       { key: "business", label: "Business details" }, { key: "lists", label: "Categories and lists" },
-      { key: "reminders", label: "Reminders" }, { key: "system", label: "System" },
+      { key: "reminders", label: "Reminders" }, { key: "commissions", label: "Commission rules" }, { key: "system", label: "System" },
     ] : []),
   ];
   const tab = tabs.some((t) => t.key === params.get("tab")) ? params.get("tab")! : admin ? "business" : "account";
@@ -25,6 +25,7 @@ export default function SettingsPage() {
       {tab === "business" && <Business />}
       {tab === "lists" && <Lists />}
       {tab === "reminders" && <Reminders />}
+      {tab === "commissions" && <CommissionRules />}
       {tab === "system" && <SystemSettings />}
     </>
   );
@@ -229,6 +230,59 @@ function Reminders() {
         ]} />
       </Card>
     </div>
+  );
+}
+
+const BASIS_LABEL: Record<string, string> = {
+  percent_of_price: "% of price / contract value",
+  months_rent: "× monthly rent",
+  percent_of_brokerage: "% of brokerage earned",
+  fixed: "Fixed amount (PKR)",
+};
+
+function CommissionRules() {
+  const act = useAction();
+  const { data, reload } = useLoad(() => q<Row[]>(supabase.from("commission_rules").select("*").order("sort")));
+  const save = (r: Row, patch: Row) => act.run(() => q(supabase.from("commission_rules").update(patch).eq("id", r.id)), reload);
+
+  return (
+    <Card title="Commission rules">
+      <ErrorBox error={act.error} />
+      <p className="mb-4 text-sm text-stone-600">
+        When a sale or purchase is marked Completed, or a rental contract becomes Active, every active rule that matches creates a pending commission.
+        Brokerage rules create one commission per buyer, seller, tenant or landlord on the deal. Agent rules pay the deal's agent (or the contract's responsible employee).
+        Changing a rule only affects commissions calculated afterwards.
+      </p>
+      <Table rows={data} columns={[
+        { key: "name", header: "Name", render: (r) => <Input defaultValue={r.name} onBlur={(e) => e.target.value.trim() && e.target.value !== r.name && save(r, { name: e.target.value.trim() })} /> },
+        { key: "kind", header: "Kind", render: (r) => <Badge tone={r.kind === "brokerage" ? "green" : "purple"}>{r.kind}</Badge> },
+        { key: "applies_to", header: "Deals", render: (r) => (
+          <Select value={r.applies_to} onChange={(e) => save(r, { applies_to: e.target.value })}>
+            {["sale", "purchase", "rental", "any"].map((x) => <option key={x} value={x}>{x}</option>)}
+          </Select>) },
+        { key: "rate", header: "Rate", render: (r) => <span className="flex items-center gap-2 whitespace-nowrap"><Input type="number" step="any" min={0} className="w-24" defaultValue={r.rate}
+          onBlur={(e) => Number(e.target.value) !== Number(r.rate) && save(r, { rate: Number(e.target.value) })} /><span className="text-xs text-stone-500">{BASIS_LABEL[r.basis]}</span></span> },
+        { key: "payer_role", header: "Paid by", render: (r) => r.kind === "brokerage" ? r.payer_role : "—" },
+        { key: "active", header: "On", render: (r) => <input type="checkbox" className="accent-brand-700" checked={r.active} onChange={(e) => save(r, { active: e.target.checked })} /> },
+      ]} />
+      <form className="mt-5 grid gap-2 border-t border-stone-100 pt-4 sm:grid-cols-6" onSubmit={async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const v = formValues(form);
+        if (await act.run(() => q(supabase.from("commission_rules").insert({
+          name: v.name, kind: v.kind, applies_to: v.applies_to, basis: v.basis, rate: Number(v.rate),
+          payer_role: v.kind === "brokerage" ? v.payer_role : null, sort: (data?.length ?? 0) + 1,
+        })), reload)) form.reset();
+      }}>
+        <Field label="New rule" className="sm:col-span-2"><Input name="name" required placeholder="e.g. Commercial rental brokerage" /></Field>
+        <Field label="Kind"><Select name="kind"><option value="brokerage">Brokerage</option><option value="agent">Agent</option><option value="referral">Referral</option></Select></Field>
+        <Field label="Deals"><Select name="applies_to">{["sale", "purchase", "rental", "any"].map((x) => <option key={x}>{x}</option>)}</Select></Field>
+        <Field label="Basis"><Select name="basis">{Object.entries(BASIS_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</Select></Field>
+        <Field label="Rate"><Input name="rate" type="number" step="any" min={0} required /></Field>
+        <Field label="Paid by (brokerage)"><Select name="payer_role">{["buyer", "seller", "tenant", "landlord"].map((x) => <option key={x}>{x}</option>)}</Select></Field>
+        <div className="flex items-end"><Button type="submit" busy={act.busy}>Add rule</Button></div>
+      </form>
+    </Card>
   );
 }
 
