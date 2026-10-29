@@ -236,7 +236,8 @@ export async function submitInquiry(i: InquiryInput): Promise<string> {
 }
 
 export async function uploadSubmissionPhoto(file: File) {
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+  // Name by type, not by the user's file name: the database only accepts sell/<uuid>.(jpg|png|webp).
+  const ext = ({ "image/png": "png", "image/webp": "webp" } as Record<string, string>)[file.type] ?? "jpg";
   const path = `sell/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from("submissions").upload(path, file, { contentType: file.type });
   if (error) throw error;

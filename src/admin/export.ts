@@ -54,6 +54,9 @@ export function exportPdf(title: string, columns: ExportColumn[], rows: Record<s
     <h1>${esc(title)}</h1><p>${esc(subtitle)} · Generated ${esc(new Date().toLocaleString("en-GB"))} · ${rows.length} rows</p>
     <table><thead><tr>${columns.map((c) => `<th>${esc(c.header)}</th>`).join("")}</tr></thead>
     <tbody>${rows.map((r) => `<tr>${columns.map((c) => `<td>${esc(cell(r, c))}</td>`).join("")}</tr>`).join("")}</tbody></table>
-    <script>window.onload=()=>{window.print()}</script></body></html>`);
+    </body></html>`);
   w.document.close();
+  // Printed from here rather than an inline script, which the Content-Security-Policy blocks.
+  w.focus();
+  w.print();
 }
