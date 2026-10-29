@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --color-brand-50: #eef6f3;
+  --color-brand-100: #d5e9e1;
+  --color-brand-600: #1f6b57;
+  --color-brand-700: #185645;
+  --color-brand-800: #133f34;
+  --color-brand-900: #0e2f27;
+  --color-gold-400: #d9b061;
+  --color-gold-500: #c8973c;
+  --color-sand-50: #faf8f3;
+  --color-sand-100: #f3efe5;
+}
+
+body {
+  @apply bg-sand-50 text-stone-800 antialiased;
+}
+
+.container-page {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.input {
+  @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20;
+}
+
+.label {
+  @apply mb-1.5 block text-sm font-medium text-stone-700;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-800 transition hover:border-stone-400 hover:bg-stone-50;
+}
+
+.prose-page h2 {
+  @apply mt-8 mb-3 font-display text-2xl text-stone-900;
+}
+.prose-page p,
+.prose-page li {
+  @apply mb-3 leading-relaxed text-stone-700;
+}
+.prose-page ul {
+  @apply list-disc pl-6;
+}
