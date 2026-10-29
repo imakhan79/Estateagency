@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Mail, MapPin, Menu, MessageCircle, Phone, X } from "lucide-react";
+import { LogIn, Mail, MapPin, Menu, MessageCircle, Phone, X } from "lucide-react";
 import { useReference } from "../lib/api";
 import { waLink } from "../lib/format";
 
@@ -43,16 +43,19 @@ export default function Layout() {
                 {n.label}
               </NavLink>
             ))}
-            <Link to="/admin/login" className="rounded-md px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900">Staff login</Link>
+            <Link to="/admin/login" className="btn-secondary ml-2 py-2"><LogIn size={16} /> Login</Link>
             {business && (
               <a href={`tel:${business.phone}`} className="btn-primary ml-3 py-2">
                 <Phone size={16} /> {business.phone}
               </a>
             )}
           </nav>
-          <button className="rounded-md p-2 md:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
-            {open ? <X /> : <Menu />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <Link to="/admin/login" className="btn-secondary px-3 py-1.5"><LogIn size={16} /> Login</Link>
+            <button className="rounded-md p-2" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
+              {open ? <X /> : <Menu />}
+            </button>
+          </div>
         </div>
         {open && (
           <nav className="border-t border-stone-200 bg-white md:hidden">
