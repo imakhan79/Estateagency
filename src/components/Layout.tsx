@@ -43,6 +43,7 @@ export default function Layout() {
                 {n.label}
               </NavLink>
             ))}
+            <Link to="/admin/login" className="rounded-md px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900">Staff login</Link>
             {business && (
               <a href={`tel:${business.phone}`} className="btn-primary ml-3 py-2">
                 <Phone size={16} /> {business.phone}
@@ -61,6 +62,7 @@ export default function Layout() {
                   {n.label}
                 </NavLink>
               ))}
+              <Link to="/admin/login" className="py-3 text-base font-medium text-stone-700">Staff login</Link>
             </div>
           </nav>
         )}
@@ -103,6 +105,7 @@ export default function Layout() {
             <p className="flex gap-4">
               <Link to="/privacy" className="hover:text-white">Privacy policy</Link>
               <Link to="/terms" className="hover:text-white">Terms and conditions</Link>
+              <Link to="/admin/login" className="hover:text-white">Staff login</Link>
             </p>
           </div>
         </div>
