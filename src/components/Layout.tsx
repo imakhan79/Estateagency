@@ -113,7 +113,7 @@ export default function Layout() {
           <div className="container-page flex flex-col gap-2 py-5 text-xs text-brand-100/70 sm:flex-row sm:justify-between">
             <p>
               © {new Date().getFullYear()} {business?.name}. All rights reserved. Powered by{" "}
-              <a href="https://zicongroup.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-crimson-400">
+              <a href="https://zicongroup.com/technology/" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-crimson-400">
                 Zicon Technology
               </a>
             </p>
