@@ -25,11 +25,13 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 border-b border-stone-200 bg-white/95 backdrop-blur">
-        <div className="container-page flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <img src="/favicon.svg" alt="" className="h-9 w-9" />
-            <span className="font-display text-xl font-semibold text-brand-900">{business?.name ?? " "}</span>
+      <header className="sticky top-0 z-40 border-t-4 border-b border-t-crimson-500 border-b-stone-200 bg-white/95 backdrop-blur">
+        <div className="container-page flex h-[4.5rem] items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5" aria-label={business?.name ?? "Home"}>
+            <img src="/logo-mark.png" alt="" className="h-11 w-auto" />
+            <span className="font-display text-base leading-tight font-bold tracking-tight text-stone-900 uppercase sm:text-lg">
+              {business?.name ?? " "}
+            </span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {nav.map((n) => (
@@ -37,7 +39,7 @@ export default function Layout() {
                 key={n.to}
                 to={n.to}
                 className={({ isActive }) =>
-                  `rounded-md px-3 py-2 text-sm font-medium transition ${isActive ? "text-brand-700" : "text-stone-600 hover:text-stone-900"}`
+                  `rounded-md px-3 py-2 text-sm font-medium transition ${isActive ? "text-crimson-500" : "text-stone-600 hover:text-brand-700"}`
                 }
               >
                 {n.label}
@@ -45,7 +47,7 @@ export default function Layout() {
             ))}
             <Link to="/admin/login" className="btn-secondary ml-2 py-2"><LogIn size={16} /> Login</Link>
             {business && (
-              <a href={`tel:${business.phone}`} className="btn-primary ml-3 py-2">
+              <a href={`tel:${business.phone}`} className="btn-accent ml-3 py-2">
                 <Phone size={16} /> {business.phone}
               </a>
             )}
@@ -75,14 +77,19 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="mt-20 bg-brand-900 text-brand-100">
+      <footer className="mt-20 border-t-4 border-crimson-500 bg-brand-900 text-brand-100">
         <div className="container-page grid gap-10 py-14 md:grid-cols-4">
           <div className="md:col-span-2">
-            <p className="font-display text-2xl text-white">{business?.name}</p>
+            <div className="flex items-center gap-3">
+              <span className="flex h-14 w-16 items-center justify-center rounded-xl bg-white p-1">
+                <img src="/logo-mark.png" alt="" className="h-full w-full object-contain" />
+              </span>
+              <p className="font-display text-xl font-bold tracking-tight text-white uppercase">{business?.name}</p>
+            </div>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-brand-100/80">{business?.tagline}</p>
           </div>
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-gold-400">Explore</p>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-crimson-400">Explore</p>
             <ul className="space-y-2 text-sm">
               <li><Link to="/buy" className="hover:text-white">Properties for sale</Link></li>
               <li><Link to="/rent" className="hover:text-white">Properties for rent</Link></li>
@@ -92,7 +99,7 @@ export default function Layout() {
           </div>
           {business && (
             <div>
-              <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-gold-400">Contact</p>
+              <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-crimson-400">Contact</p>
               <ul className="space-y-2.5 text-sm">
                 <li className="flex gap-2"><Phone size={16} className="mt-0.5 shrink-0" /><a href={`tel:${business.phone}`}>{business.phone}</a></li>
                 <li className="flex gap-2"><MessageCircle size={16} className="mt-0.5 shrink-0" /><a href={waLink(business.whatsapp)}>{business.whatsapp}</a></li>
@@ -104,7 +111,12 @@ export default function Layout() {
         </div>
         <div className="border-t border-white/10">
           <div className="container-page flex flex-col gap-2 py-5 text-xs text-brand-100/70 sm:flex-row sm:justify-between">
-            <p>© {new Date().getFullYear()} {business?.name}. All rights reserved.</p>
+            <p>
+              © {new Date().getFullYear()} {business?.name}. All rights reserved. Powered by{" "}
+              <a href="https://zicongroup.com/" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-crimson-400">
+                Zicon Technology
+              </a>
+            </p>
             <p className="flex gap-4">
               <Link to="/privacy" className="hover:text-white">Privacy policy</Link>
               <Link to="/terms" className="hover:text-white">Terms and conditions</Link>

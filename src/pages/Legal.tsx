@@ -8,7 +8,7 @@ export function Privacy() {
   useDocumentTitle(`Privacy policy${b ? ` | ${b.name}` : ""}`);
   return (
     <article className="container-page prose-page max-w-3xl py-12">
-      <h1 className="font-display text-4xl text-stone-900">Privacy policy</h1>
+      <h1 className="font-display text-4xl font-semibold text-stone-900">Privacy policy</h1>
       <p>This policy explains how {b?.name ?? "we"} collect and use personal information through this website.</p>
       <h2>What we collect</h2>
       <p>When you send an enquiry, request a viewing or submit a property, we collect the details you enter: your name, mobile number, email address, message, and any property details or photos you provide.</p>
@@ -32,7 +32,7 @@ export function Terms() {
   useDocumentTitle(`Terms and conditions${b ? ` | ${b.name}` : ""}`);
   return (
     <article className="container-page prose-page max-w-3xl py-12">
-      <h1 className="font-display text-4xl text-stone-900">Terms and conditions</h1>
+      <h1 className="font-display text-4xl font-semibold text-stone-900">Terms and conditions</h1>
       <p>By using this website you agree to these terms.</p>
       <h2>Listings</h2>
       <p>Property details, prices and availability are provided in good faith but may change without notice. Photos and descriptions are for guidance only and do not form part of any contract. Please verify all details, documents and measurements before committing to a transaction.</p>

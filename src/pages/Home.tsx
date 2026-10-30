@@ -40,8 +40,8 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-900 via-brand-900/80 to-brand-900/30" />
         <div className="container-page py-20 sm:py-28">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">Buy · Sell · Rent</p>
-          <h1 className="mt-4 max-w-2xl font-display text-4xl leading-tight text-white sm:text-6xl">
+          <p className="text-sm font-semibold uppercase tracking-widest text-crimson-400">Buy · Sell · Rent</p>
+          <h1 className="mt-4 max-w-2xl font-display text-4xl font-semibold leading-tight text-white sm:text-6xl">
             Find the right property, with people you can trust.
           </h1>
           <p className="mt-5 max-w-xl text-lg text-brand-100">
@@ -71,7 +71,7 @@ export default function Home() {
                 <option value="">Any type</option>
                 {ref?.types.map((t) => <option key={t.slug} value={t.slug}>{t.name}</option>)}
               </select>
-              <button className="btn-primary px-6"><Search size={18} /> Search</button>
+              <button className="btn-accent px-6"><Search size={18} /> Search</button>
             </div>
           </form>
         </div>
@@ -80,7 +80,7 @@ export default function Home() {
       <section className="container-page py-16">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="font-display text-3xl text-stone-900">Featured properties</h2>
+            <h2 className="font-display text-3xl font-semibold text-stone-900">Featured properties</h2>
             <p className="mt-2 text-stone-600">Hand-picked listings our agents recommend this week.</p>
           </div>
           <Link to="/search" className="hidden items-center gap-1 text-sm font-semibold text-brand-700 hover:underline sm:flex">
@@ -96,7 +96,7 @@ export default function Home() {
 
       <section className="bg-white py-16">
         <div className="container-page">
-          <h2 className="text-center font-display text-3xl text-stone-900">How we help</h2>
+          <h2 className="text-center font-display text-3xl font-semibold text-stone-900">How we help</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {[
               { icon: Search, title: "Buying", text: "Tell us what you need and your budget. We shortlist verified properties and arrange viewings at times that suit you.", to: "/buy" },
@@ -119,11 +119,11 @@ export default function Home() {
       <section className="container-page py-16">
         <div className="grid items-center gap-10 rounded-3xl bg-brand-800 p-8 text-white sm:p-12 lg:grid-cols-2">
           <div>
-            <h2 className="font-display text-3xl">Thinking of selling or renting out?</h2>
+            <h2 className="font-display text-3xl">Thinking font-semibold of selling or renting out?</h2>
             <p className="mt-3 text-brand-100">
               Send us your property details. An agent will visit, advise on price and list it once it has been checked.
             </p>
-            <Link to="/sell" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-gold-500 px-5 py-2.5 text-sm font-semibold text-brand-900 hover:bg-gold-400">
+            <Link to="/sell" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-crimson-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-crimson-600">
               Submit your property <ArrowRight size={16} />
             </Link>
           </div>
@@ -136,7 +136,7 @@ export default function Home() {
               const I = Icon as typeof BadgeCheck;
               return (
                 <li key={text as string} className="flex items-center gap-3 text-brand-50">
-                  <I className="shrink-0 text-gold-400" /> {text as string}
+                  <I className="shrink-0 text-crimson-400" /> {text as string}
                 </li>
               );
             })}

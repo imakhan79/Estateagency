@@ -144,7 +144,7 @@ function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-900 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-        <img src="/favicon.svg" alt="" className="h-10 w-10" />
+        <img src="/logo.png" alt="Rehman Enterprises" className="h-16 w-auto" />
         <h1 className="mt-4 text-xl font-semibold text-stone-900">
           {mode === "signin" ? "Staff sign in" : mode === "signup" ? "Create staff account" : "Reset password"}
         </h1>
@@ -221,7 +221,7 @@ function Shell() {
   const sidebar = (
     <nav className="flex h-full flex-col">
       <Link to="/admin" className="flex items-center gap-2 px-5 py-5">
-        <img src="/favicon.svg" alt="" className="h-8 w-8" />
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white p-1"><img src="/logo-mark.png" alt="" className="h-full w-full object-contain" /></span>
         <span className="font-semibold text-white">Back office</span>
       </Link>
       <div className="flex-1 space-y-0.5 px-3">

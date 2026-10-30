@@ -29,7 +29,7 @@ export default function PropertyCard({ p, refData }: { p: Property; refData: Ref
             {p.listing_type === "rent" ? "For rent" : "For sale"}
           </span>
           {p.availability !== "available" && (
-            <span className="rounded-full bg-gold-500 px-3 py-1 text-xs font-semibold text-white">
+            <span className="rounded-full bg-crimson-500 px-3 py-1 text-xs font-semibold text-white">
               {availabilityName(p.availability, refData)}
             </span>
           )}

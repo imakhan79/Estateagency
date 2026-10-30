@@ -114,7 +114,7 @@ export default function PropertyDetail() {
             </span>
             <span className="text-xs text-stone-500">Ref {p.ref}</span>
           </div>
-          <h1 className="mt-3 font-display text-3xl text-stone-900 sm:text-4xl">{p.title}</h1>
+          <h1 className="mt-3 font-display text-3xl font-semibold text-stone-900 sm:text-4xl">{p.title}</h1>
           <p className="mt-2 flex items-center gap-1.5 text-stone-600"><MapPin size={16} /> {p.public_address || `${p.area}, ${p.city}`}</p>
           <div className="mt-4 flex flex-wrap items-center gap-4">
             <p className="text-3xl font-semibold text-brand-800">{formatPrice(p.price, p.currency, rent)}</p>
@@ -133,12 +133,12 @@ export default function PropertyDetail() {
             ))}
           </dl>
 
-          <h2 className="mt-10 font-display text-2xl text-stone-900">About this property</h2>
+          <h2 className="mt-10 font-display text-2xl font-semibold text-stone-900">About this property</h2>
           <p className="mt-3 whitespace-pre-line leading-relaxed text-stone-700">{p.description}</p>
 
           {features.length > 0 && (
             <>
-              <h2 className="mt-10 font-display text-2xl text-stone-900">Features</h2>
+              <h2 className="mt-10 font-display text-2xl font-semibold text-stone-900">Features</h2>
               <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                 {features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-stone-700"><Check size={18} className="text-brand-600" /> {f}</li>
@@ -149,7 +149,7 @@ export default function PropertyDetail() {
 
           {p.video_urls.length > 0 && (
             <>
-              <h2 className="mt-10 font-display text-2xl text-stone-900">Video tour</h2>
+              <h2 className="mt-10 font-display text-2xl font-semibold text-stone-900">Video tour</h2>
               <ul className="mt-3 space-y-2">
                 {p.video_urls.map((v) => <li key={v}><a href={v} target="_blank" rel="noreferrer" className="text-brand-700 underline">Watch video</a></li>)}
               </ul>
@@ -174,7 +174,7 @@ export default function PropertyDetail() {
 
       {similar.length > 0 && (
         <section className="mt-16">
-          <h2 className="font-display text-2xl text-stone-900">Similar properties</h2>
+          <h2 className="font-display text-2xl font-semibold text-stone-900">Similar properties</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {similar.map((s) => <PropertyCard key={s.id} p={s} refData={ref} />)}
           </div>

@@ -55,7 +55,7 @@ export default function SellProperty() {
     <div className="container-page py-12">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
         <div>
-          <h1 className="font-display text-4xl text-stone-900">Sell or rent out your property</h1>
+          <h1 className="font-display text-4xl font-semibold text-stone-900">Sell or rent out your property</h1>
           <p className="mt-4 text-lg text-stone-600">
             Tell us about your property. An agent will call you, visit, and agree a price with you before anything is listed.
           </p>

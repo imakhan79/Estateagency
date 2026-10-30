@@ -12,13 +12,13 @@ export default function About() {
     <>
       <section className="bg-brand-900 py-20 text-white">
         <div className="container-page max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold-400">About us</p>
-          <h1 className="mt-3 font-display text-4xl sm:text-5xl">{b?.name}</h1>
+          <p className="text-sm font-semibold uppercase tracking-widest text-crimson-400">About us</p>
+          <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{b?.name}</h1>
           <p className="mt-5 text-lg leading-relaxed text-brand-100">{b?.about}</p>
         </div>
       </section>
       <section className="container-page py-16">
-        <h2 className="font-display text-3xl text-stone-900">How we work</h2>
+        <h2 className="font-display text-3xl font-semibold text-stone-900">How we work</h2>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             [BadgeCheck, "Verified listings", "We check ownership documents and visit every property before it is published."],

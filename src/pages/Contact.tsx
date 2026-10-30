@@ -10,7 +10,7 @@ export default function Contact() {
 
   return (
     <div className="container-page py-12">
-      <h1 className="font-display text-4xl text-stone-900">Contact us</h1>
+      <h1 className="font-display text-4xl font-semibold text-stone-900">Contact us</h1>
       <p className="mt-3 max-w-xl text-lg text-stone-600">Call, message us on WhatsApp, or send the form and an agent will get back to you.</p>
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.4fr]">
         {b && (
