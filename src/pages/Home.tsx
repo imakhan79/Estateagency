@@ -119,7 +119,7 @@ export default function Home() {
       <section className="container-page py-16">
         <div className="grid items-center gap-10 rounded-3xl bg-brand-800 p-8 text-white sm:p-12 lg:grid-cols-2">
           <div>
-            <h2 className="font-display text-3xl">Thinking font-semibold of selling or renting out?</h2>
+            <h2 className="font-display text-3xl">Thinking of selling or renting out?</h2>
             <p className="mt-3 text-brand-100">
               Send us your property details. An agent will visit, advise on price and list it once it has been checked.
             </p>
