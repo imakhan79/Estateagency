@@ -68,6 +68,16 @@ export const PROPERTY_COLUMNS =
   "size, size_unit, bedrooms, bathrooms, floors, furnishing, featured, availability, video_urls, seo_title, " +
   "seo_description, published_at, property_media(id, kind, storage_path, external_url, alt, sort), property_features(feature_id)";
 
+// The website must only ever show live listings. RLS hides the rest from anonymous visitors, but a
+// staff member who is signed in to the admin panel can read every property, so filter explicitly too.
+function publicListings() {
+  return supabase
+    .from("properties")
+    .select(`${PROPERTY_COLUMNS}, availability_statuses!inner(show_on_site)`)
+    .eq("publication", "published")
+    .eq("availability_statuses.show_on_site", true);
+}
+
 export function mediaUrl(m: Media) {
   return m.external_url ?? storageUrl("property-media", m.storage_path!);
 }
@@ -132,7 +142,7 @@ export interface SearchFilters {
 }
 
 export async function searchProperties(f: SearchFilters, ref: Reference): Promise<Property[]> {
-  let query = supabase.from("properties").select(PROPERTY_COLUMNS);
+  let query = publicListings();
 
   if (f.listingType) query = query.eq("listing_type", f.listingType);
   if (f.category) {
@@ -179,15 +189,13 @@ export async function searchProperties(f: SearchFilters, ref: Reference): Promis
 }
 
 export async function getProperty(slug: string) {
-  const { data, error } = await supabase.from("properties").select(PROPERTY_COLUMNS).eq("slug", slug).maybeSingle();
+  const { data, error } = await publicListings().eq("slug", slug).maybeSingle();
   if (error) throw error;
   return data as unknown as Property | null;
 }
 
 export async function getFeatured(limit = 6) {
-  const { data, error } = await supabase
-    .from("properties")
-    .select(PROPERTY_COLUMNS)
+  const { data, error } = await publicListings()
     .eq("featured", true)
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -196,9 +204,7 @@ export async function getFeatured(limit = 6) {
 }
 
 export async function getSimilar(p: Property, limit = 3) {
-  const { data, error } = await supabase
-    .from("properties")
-    .select(PROPERTY_COLUMNS)
+  const { data, error } = await publicListings()
     .eq("listing_type", p.listing_type)
     .eq("type_id", p.type_id)
     .neq("id", p.id)
