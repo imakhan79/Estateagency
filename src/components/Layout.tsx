@@ -81,7 +81,7 @@ export default function Layout() {
         <div className="container-page grid gap-10 py-14 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3">
-              <img src="/logo-mark-white.png" alt="" className="h-12 w-auto" />
+              <img src="/logo-mark-white.png" alt="" className="h-16 w-auto" />
               <p className="font-display text-xl font-bold tracking-tight text-white uppercase">{business?.name}</p>
             </div>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-brand-100/80">{business?.tagline}</p>
