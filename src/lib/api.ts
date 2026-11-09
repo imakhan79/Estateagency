@@ -200,7 +200,11 @@ export async function getFeatured(limit = 6) {
     .order("published_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return data as unknown as Property[];
+  if (data.length) return data as unknown as Property[];
+  // Nothing marked featured yet: show the latest listings rather than an empty section.
+  const latest = await publicListings().order("published_at", { ascending: false }).limit(limit);
+  if (latest.error) throw latest.error;
+  return latest.data as unknown as Property[];
 }
 
 export async function getSimilar(p: Property, limit = 3) {

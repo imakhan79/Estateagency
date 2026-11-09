@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { useDocumentTitle } from "../lib/format";
 
 export default function NotFound() {
+  useDocumentTitle("Page not found");
   return (
     <div className="container-page py-24 text-center">
       <p className="font-display text-6xl font-semibold text-brand-700">404</p>
