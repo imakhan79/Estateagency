@@ -40,7 +40,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-900 via-brand-900/80 to-brand-900/30" />
         <div className="container-page py-20 sm:py-28">
-          <p className="text-sm font-semibold uppercase tracking-widest text-crimson-400">Buy · Sell · Rent</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-300">Buy · Sell · Rent</p>
           <h1 className="mt-4 max-w-2xl font-display text-4xl font-semibold leading-tight text-white sm:text-6xl">
             Find the right property, with people you can trust.
           </h1>
@@ -123,7 +123,7 @@ export default function Home() {
             <p className="mt-3 text-brand-100">
               Send us your property details. An agent will visit, advise on price and list it once it has been checked.
             </p>
-            <Link to="/sell" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-crimson-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-crimson-600">
+            <Link to="/sell" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-ink-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink-700">
               Submit your property <ArrowRight size={16} />
             </Link>
           </div>
@@ -136,7 +136,7 @@ export default function Home() {
               const I = Icon as typeof BadgeCheck;
               return (
                 <li key={text as string} className="flex items-center gap-3 text-brand-50">
-                  <I className="shrink-0 text-crimson-400" /> {text as string}
+                  <I className="shrink-0 text-brand-300" /> {text as string}
                 </li>
               );
             })}

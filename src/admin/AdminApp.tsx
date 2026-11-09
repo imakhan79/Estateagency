@@ -221,7 +221,7 @@ function Shell() {
   const sidebar = (
     <nav className="flex h-full flex-col">
       <Link to="/admin" className="flex items-center gap-2 px-5 py-5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white p-1"><img src="/logo-mark.png" alt="" className="h-full w-full object-contain" /></span>
+        <img src="/logo-mark-white.png" alt="" className="h-8 w-auto" />
         <span className="font-semibold text-white">Back office</span>
       </Link>
       <div className="flex-1 space-y-0.5 px-3">

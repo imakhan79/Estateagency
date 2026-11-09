@@ -12,7 +12,7 @@ export default function About() {
     <>
       <section className="bg-brand-900 py-20 text-white">
         <div className="container-page max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-widest text-crimson-400">About us</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-300">About us</p>
           <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{b?.name}</h1>
           <p className="mt-5 text-lg leading-relaxed text-brand-100">{b?.about}</p>
         </div>
