@@ -26,9 +26,9 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b-4 border-ink-600 bg-brand-600 text-white shadow-sm">
-        <div className="container-page flex h-[4.5rem] items-center justify-between">
+        <div className="container-page flex h-[4.5rem] items-center justify-between sm:h-20">
           <Link to="/" className="flex items-center gap-2.5" aria-label={business?.name ?? "Home"}>
-            <img src="/logo-mark-white.png" alt="" className="h-11 w-auto" />
+            <img src="/logo-mark-white.png" alt="" className="h-12 w-auto sm:h-16" />
             <span className="font-display text-base leading-tight font-bold tracking-tight text-white uppercase sm:text-lg">
               {business?.name ?? " "}
             </span>
