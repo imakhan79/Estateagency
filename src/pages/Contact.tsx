@@ -1,6 +1,6 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useReference } from "../lib/api";
-import { useDocumentTitle, waLink } from "../lib/format";
+import { splitNumbers, telLink, useDocumentTitle, waLink } from "../lib/format";
 import InquiryForm from "../components/InquiryForm";
 
 export default function Contact() {
@@ -16,8 +16,8 @@ export default function Contact() {
         {b && (
           <ul className="space-y-6">
             {[
-              [Phone, "Phone", <a href={`tel:${b.phone}`} className="hover:underline">{b.phone}</a>],
-              [MessageCircle, "WhatsApp", <a href={waLink(b.whatsapp)} target="_blank" rel="noreferrer" className="hover:underline">{b.whatsapp}</a>],
+              [Phone, "Phone", <span className="flex flex-col">{splitNumbers(b.phone).map((n) => <a key={n} href={telLink(n)} className="hover:underline">{n}</a>)}</span>],
+              [MessageCircle, "WhatsApp", <span className="flex flex-col">{splitNumbers(b.whatsapp).map((n) => <a key={n} href={waLink(n)} target="_blank" rel="noreferrer" className="hover:underline">{n}</a>)}</span>],
               [Mail, "Email", <a href={`mailto:${b.email}`} className="break-all hover:underline">{b.email}</a>],
               [MapPin, "Office", b.address],
               [Clock, "Hours", b.hours],

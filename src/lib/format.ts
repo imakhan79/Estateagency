@@ -38,8 +38,20 @@ export function availabilityName(slug: string, ref?: Reference | null) {
   return ref?.availability.find((a) => a.slug === slug)?.name ?? slug;
 }
 
+// Settings may hold several numbers in one field, e.g. "+92 302 8600631 / +92 315 2069499".
+export function splitNumbers(value: string) {
+  return value.split(/[\/,;|]|\bor\b/i).map((n) => n.trim()).filter((n) => /\d{6,}/.test(n.replace(/\D/g, "")));
+}
+
+export function telLink(number: string) {
+  return `tel:${(splitNumbers(number)[0] ?? number).replace(/[^\d+]/g, "")}`;
+}
+
 export function waLink(number: string, text?: string) {
-  const digits = number.replace(/\D/g, "");
+  let digits = (splitNumbers(number)[0] ?? number).replace(/\D/g, "");
+  // Local Pakistani format (0302...) needs the country code for wa.me.
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  else if (digits.startsWith("0")) digits = `92${digits.slice(1)}`;
   return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { LogIn, Mail, MapPin, Menu, MessageCircle, Phone, X } from "lucide-react";
 import { useReference } from "../lib/api";
-import { waLink } from "../lib/format";
+import { splitNumbers, telLink, waLink } from "../lib/format";
 
 const nav = [
   { to: "/buy", label: "Buy" },
@@ -47,8 +47,8 @@ export default function Layout() {
             ))}
             <Link to="/admin/login" className="btn-secondary ml-2 py-2"><LogIn size={16} /> Login</Link>
             {business && (
-              <a href={`tel:${business.phone}`} className="btn-accent ml-3 py-2">
-                <Phone size={16} /> {business.phone}
+              <a href={telLink(business.phone)} className="btn-accent ml-3 py-2">
+                <Phone size={16} /> {splitNumbers(business.phone)[0] ?? business.phone}
               </a>
             )}
           </nav>
@@ -99,8 +99,8 @@ export default function Layout() {
             <div>
               <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-300">Contact</p>
               <ul className="space-y-2.5 text-sm">
-                <li className="flex gap-2"><Phone size={16} className="mt-0.5 shrink-0" /><a href={`tel:${business.phone}`}>{business.phone}</a></li>
-                <li className="flex gap-2"><MessageCircle size={16} className="mt-0.5 shrink-0" /><a href={waLink(business.whatsapp)}>{business.whatsapp}</a></li>
+                <li className="flex gap-2"><Phone size={16} className="mt-0.5 shrink-0" /><span className="flex flex-col">{splitNumbers(business.phone).map((n) => <a key={n} href={telLink(n)}>{n}</a>)}</span></li>
+                <li className="flex gap-2"><MessageCircle size={16} className="mt-0.5 shrink-0" /><span className="flex flex-col">{splitNumbers(business.whatsapp).map((n) => <a key={n} href={waLink(n)} target="_blank" rel="noreferrer">{n}</a>)}</span></li>
                 <li className="flex gap-2"><Mail size={16} className="mt-0.5 shrink-0" /><a href={`mailto:${business.email}`} className="break-all">{business.email}</a></li>
                 <li className="flex gap-2"><MapPin size={16} className="mt-0.5 shrink-0" />{business.address}</li>
               </ul>

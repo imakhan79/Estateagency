@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Bath, BedDouble, Building2, Check, ChevronLeft, ChevronRight, Layers, MapPin, Maximize, MessageCircle, Phone, Share2, Sofa } from "lucide-react";
 import { getProperty, getSimilar, images, mediaUrl, useReference, type Property } from "../lib/api";
-import { availabilityName, formatPrice, formatSize, furnishingLabel, typeName, useDocumentTitle, waLink } from "../lib/format";
+import { availabilityName, formatPrice, formatSize, furnishingLabel, telLink, typeName, useDocumentTitle, waLink } from "../lib/format";
 import InquiryForm from "../components/InquiryForm";
 import PropertyCard from "../components/PropertyCard";
 import NotFound from "./NotFound";
@@ -165,7 +165,7 @@ export default function PropertyDetail() {
           </div>
           {business && (
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <a href={`tel:${business.phone}`} className="btn-secondary"><Phone size={16} /> Call</a>
+              <a href={telLink(business.phone)} className="btn-secondary"><Phone size={16} /> Call</a>
               <a href={waLink(business.whatsapp, `Hello, I am interested in ${p.title} (ref ${p.ref}). ${window.location.href}`)} target="_blank" rel="noreferrer" className="btn-secondary"><MessageCircle size={16} /> WhatsApp</a>
             </div>
           )}
